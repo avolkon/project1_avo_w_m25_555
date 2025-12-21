@@ -1,0 +1,23 @@
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "labyrinth-game"
+version = "0.1.0"
+description = "ДЗ1 Игра Лабиринт сокровищ Анастасия Волконская НИЯУ МИФИ Python"
+authors = [
+    {name = "avo",email = "aavolkon@mail.ru"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+]
+
+packages = [
+    { include = "labyrinth_game", from = "." },
+]
+
+[project.scripts]
+laby = "labyrinth_game.main:main"
+

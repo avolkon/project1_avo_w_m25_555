@@ -1,0 +1,5 @@
+Подсказки по терминалу
+
+Создать файл
+New-Item -ItemType File -Name "poetry_info.txt"
+

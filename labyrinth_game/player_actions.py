@@ -1,6 +1,6 @@
 # Модуль действий игрока: перемещение между комнатами
 
-from constants import ROOMS
+from labyrinth_game import ROOMS
 
 # Модуль действий игрока: проверка наличия артефактов
 def look_items(game_state):

@@ -1,5 +1,5 @@
 # utils.py
-from constants import ROOMS
+from labyrinth_game import ROOMS
 
 def describe_room(game_state):
     '''

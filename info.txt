@@ -3,3 +3,6 @@
 Создать файл
 New-Item -ItemType File -Name "poetry_info.txt"
 
+New-Item -ItemType File -Name "constants.py"
+
+New-Item -ItemType File -Name "draft.md"

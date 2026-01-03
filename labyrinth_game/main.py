@@ -8,7 +8,7 @@
 
 # Импорт модулей игры
 from labyrinth_game import ROOMS, START_ROOM, WIN_ROOM, COMMANDS, MESSAGES
-from labyrinth_game import move_player, take_item, use_item, look_items, get_input, back
+from labyrinth_game import move_player, take_item, use_item, show_items, get_input, back
 from labyrinth_game import describe_room, solve_puzzle
 
 # Определение состояния игрока
@@ -67,7 +67,7 @@ def process_command(game_state, command):
             describe_room(game_state) # Вызывает функцию, выводящую описание комнаты
         
         case 'items' | 'артефакты':
-            look_items(game_state) # Вызывает функцию, показывающую список артефактов игрока
+            show_items(game_state) # Вызывает функцию, показывающую список артефактов игрока
         
         case 'help' | 'помощь':
             show_help() # Выводит подсказку по командам

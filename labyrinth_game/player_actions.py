@@ -4,7 +4,7 @@ from labyrinth_game import ROOMS, TOTAL_PUZZLES
 from labyrinth_game import describe_room, prevent_take_chest
 
 # Модуль действий игрока: проверка наличия артефактов
-def look_items(game_state):
+def show_items(game_state):
     '''
     Отображает артефакты игрока.
     Args:

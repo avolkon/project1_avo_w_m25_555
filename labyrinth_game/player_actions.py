@@ -1,7 +1,7 @@
 # Модуль действий игрока: перемещение между комнатами
 
 from labyrinth_game import ROOMS
-from labyrinth_game import describe_room
+from labyrinth_game import describe_room, prevent_take_chest
 
 # Модуль действий игрока: проверка наличия артефактов
 def look_items(game_state):
@@ -124,15 +124,20 @@ def take_item(game_state, item_name):
     '''
     Подбирает предмет из комнаты.
     Args:
-        game_state: {'artifacts': [], 'current_room': str}
+        game_state: {'items': [], 'current_room': str}
         item_name: 'torch', 'rusty_key'
     Returns: True=успех
     '''
     current = game_state['current_room']
-    room_items = ROOMS[current].get('items', [])
+    # БЛОКИРОВКА СУНДУКА
+    if prevent_take_chest(game_state, item_name):
+        return False
     
+
+    room_items = ROOMS[current].get('items', [])
+
     if item_name in room_items:
-        game_state['artifacts'].append(item_name)
+        game_state['items'].append(item_name)
         room_items.remove(item_name)
         print(f"✅ Вы подняли: {item_name}")
         return True
@@ -145,9 +150,9 @@ def take_item(game_state, item_name):
 # Двухшаговая реализация взятия артефакта из шкатулки
 def handle_bronze_box(game_state):
     items = game_state.get('items', [])
-    if 'rusty_key' not in items:
-        game_state['items'].append('rusty_key')
-        print("✅ Теперь у тебя есть rusty_key!")
+    if 'treasure_key' not in items:
+        game_state['items'].append('treasure_key')
+        print("✅ Теперь у тебя есть treasure_key береги его!")
     else:
         print("✅ Шкатулка пуста.")
 

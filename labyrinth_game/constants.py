@@ -120,3 +120,4 @@ MESSAGES = {
     'nothing_to_take': 'Здесь нет предметов для взятия.'
 }
 
+TOTAL_PUZZLES = len([r for r in ROOMS if ROOMS[r].get('puzzle')])

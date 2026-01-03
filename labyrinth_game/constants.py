@@ -121,3 +121,6 @@ MESSAGES = {
 }
 
 TOTAL_PUZZLES = len([r for r in ROOMS if ROOMS[r].get('puzzle')])
+
+SIN_MULTIPLIER = 12.369369
+STRETCH_FACTOR = 696.3333

@@ -1,7 +1,7 @@
 # Модуль действий игрока: перемещение между комнатами
 
-from labyrinth_game import ROOMS
-from labyrinth_game import describe_room, prevent_take_chest
+from labyrinth_game import ROOMS, current_room
+from labyrinth_game import describe_room, prevent_take_chest, attempt_open_treasure
 
 # Модуль действий игрока: проверка наличия артефактов
 def look_items(game_state):
@@ -133,7 +133,6 @@ def take_item(game_state, item_name):
     if prevent_take_chest(game_state, item_name):
         return False
     
-
     room_items = ROOMS[current].get('items', [])
 
     if item_name in room_items:
@@ -152,16 +151,29 @@ def handle_bronze_box(game_state):
     items = game_state.get('items', [])
     if 'treasure_key' not in items:
         game_state['items'].append('treasure_key')
-        print("✅ Теперь у тебя есть treasure_key береги его!")
+        print("🔑 Теперь у тебя есть treasure_key береги его!")
     else:
-        print("✅ Шкатулка пуста.")
+        print("Шкатулка пуста.")
 
+# СПЕЦИАЛЬНАЯ ЛОГИКА для treasure_room
+def win_treasure_key(game_state):
+    current_room = game_state['current_room']
+    if current_room == 'treasure_room':
+        print("Ты применил ключ и замок щёлкает. Сундук открыт!")
+        print("🏆 В сундуке сокровище! Это победа!")
+        game_state['game_over'] = True
+        if 'treasure_chest' in ROOMS[current_room]['items']:
+            ROOMS[current_room]['items'].remove('treasure_chest')
+        return True
+    return False
+
+    
 # Словарь обработчиков предметов
 ITEM_ACTIONS = {
     'torch': lambda gs: print("🔥 Можешь освещать свой путь! Но расходуй заряд экономно."),
     'sword': lambda gs: print("⚔️ Уверенность!"),
     'bronze_box': handle_bronze_box,
-    'golden_chest': lambda gs: print("🏆 ПОБЕДА!"),
+    'treasure_key': lambda gs: print("В этой комнате ключ ничего не откроет."),
     'candle': lambda gs: print("🕯️ Источник света для прочтения книги!"),
     'silver_cross': lambda gs: print("✝️ Защита от опасных артефактов!"),
     'ancient_book': lambda gs: print("📖 Теперь тебе доступны древние знания!"),
@@ -180,6 +192,12 @@ def use_item(game_state, item_name):
     Returns:
         bool: True если предмет использован, False если нет
     '''
+    current_room = game_state['current_room']
+
+    # СПЕЦИАЛЬНАЯ ЛОГИКА для treasure_room
+    if item_name == 'treasure_key' and current_room == 'treasure_room':
+        return win_treasure_key(game_state)
+    
     # Проверяем наличие предмета в инвентаре
     items = game_state.get('items', [])
     

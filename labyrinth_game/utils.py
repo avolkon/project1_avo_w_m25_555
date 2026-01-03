@@ -1,5 +1,8 @@
 # utils.py
-from labyrinth_game import ROOMS, TOTAL_PUZZLES, get_input, attempt_open_treasure
+from labyrinth_game import ROOMS, SIN_MULTIPLIER, TOTAL_PUZZLES, get_input, attempt_open_treasure
+from labyrinth_game import SIN_MULTIPLIER, STRETCH_FACTOR
+import math
+from typing import Union
 
 
 # Модуль: описание комнаты
@@ -52,7 +55,7 @@ def describe_room(game_state):
     
     print(f"{'═' * 50}")
 
-# Модуль: решение загадок, с расширенным функционалом: добавлены возможности:
+# Модуль: решение загадок:
 
 def solve_puzzle(game_state):
     '''
@@ -196,3 +199,48 @@ def prevent_take_chest(game_state, item_name):
         return True
     return False
 
+# Модуль: генерация псевдослучайных чисел
+
+# Импорты для данной функции (перенесены в начало)
+# from labyrinth_game import SIN_MULTIPLIER, STRETCH_FACTOR
+# import math
+# from typing import Union
+
+# Создание генератора
+def pseudo_random(seed: int, modulo: int) -> int:
+    """
+    Высокопроизводительный генератор псевдослучайных чисел [0, modulo).
+    Алгоритм (математически предсказуемый):
+    1. sin(seed × SIN_MULTIPLIER) → [-1, 1]
+    2. × STRETCH_FACTOR → "размазывание"
+    3. {x} = x % 1 → [0, 1) (дробная часть)
+    4. × modulo → [0, modulo)
+    5. int() → целое число в диапазоне [0, modulo)
+
+    Args:
+        seed: Последовательное значение (например, game_state['steps'])
+        modulo: Верхняя граница диапазона (должно быть > 0)
+    Returns:
+        int: Число в диапазоне [0, modulo)
+    Raises:
+        ValueError: если modulo <= 0
+        TypeError: если seed не является int
+    """
+    
+    # Валидация входных данных
+    if not isinstance(seed, int):
+        raise TypeError(f"seed должен быть int, получено: {type(seed)}")
+    if modulo <= 0:
+        raise ValueError(f"modulo должно быть > 0, получено: {modulo}")
+
+    # Основной расчёт
+    sin_value = math.sin(seed * SIN_MULTIPLIER) # синус от seed,
+    # умноженный на большое число с дробной частью (константа)
+    stretched = sin_value * STRETCH_FACTOR # соответствует задаче:
+    # Результат умножьте на другое большое число с дробной частью
+    # чтобы "размазать" значения
+    fractional = stretched % 1 # получение дробной части от результата вычислений
+    result = int(fractional * modulo) # реализована задача отбросить дробную часть
+    # и получить целое число через встроенную функцию int()
+
+    return result

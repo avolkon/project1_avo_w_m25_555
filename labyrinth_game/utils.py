@@ -1,5 +1,5 @@
 # utils.py
-from labyrinth_game import ROOMS, SIN_MULTIPLIER, TOTAL_PUZZLES, get_input, attempt_open_treasure
+from labyrinth_game import ROOMS, TOTAL_PUZZLES, get_input, attempt_open_treasure, back
 from labyrinth_game import SIN_MULTIPLIER, STRETCH_FACTOR
 import math
 from typing import Union
@@ -244,3 +244,122 @@ def pseudo_random(seed: int, modulo: int) -> int:
     # и получить целое число через встроенную функцию int()
 
     return result
+
+# utils.py
+def trigger_trap(game_state: dict) -> None:
+    """
+    ЛОВУШКА v15: ✅ Количество артефактов ДО потери + упрощенная проверка ПОСЛЕ
+    """
+    print("Ловушка активирована! Пол стал дрожать…")
+    
+    # Инициализация
+    if 'items' not in game_state:
+        game_state['items'] = []
+    if 'steps' not in game_state:
+        game_state['steps'] = 0
+    if 'current_room' not in game_state:
+        game_state['current_room'] = 'start'
+        
+    items = game_state['items']
+    current_room = game_state['current_room']
+    lost_item = None
+    
+    # Инициализация структуры комнаты
+    if 'rooms' not in game_state:
+        game_state['rooms'] = {}
+    if current_room not in game_state['rooms']:
+        game_state['rooms'][current_room] = {'items': [], 'charmed_item': None}
+    
+    # ✅ 1. ПРОВЕРКА АРТЕФАКТОВ ДО потери (КОЛИЧЕСТВО + ПЕРЕЧЕНЬ)
+    artifacts_before = [item for item in items if item in ['candle', 'silver_cross']]
+    artifacts_count = len(artifacts_before)
+    
+    if artifacts_count > 0:
+        print(f"У тебя {artifacts_count} артефактов(а): {', '.join(artifacts_before)}")
+    
+    # 2. ПОТЕРЯ СЛУЧАЙНОГО ПРЕДМЕТА → в комнату как charmed_item
+    if items:
+        item_index = pseudo_random(game_state['steps'], len(items))
+        lost_item = items.pop(item_index)
+        print(f"Ты потерял предмет: {lost_item}")
+        
+        # ✅ ПЕРЕМЕЩАЕМ в комнату как заколдованный артефакт
+        game_state['rooms'][current_room]['charmed_item'] = lost_item
+        print(f"📦 {lost_item} теперь заколдованный артефакт в комнате!")
+        
+    else:
+        print("У тебя нет предметов для потери.")
+        lost_item = None
+    
+    # ✅ 3. ПРОВЕРКА АРТЕФАКТОВ ПОСЛЕ ПОТЕРИ (упрощенная)
+    has_candle = 'candle' in items
+    has_silver_cross = 'silver_cross' in items
+    
+    # ЛОГИКА: если БЫЛ хотя бы 1 артефакт ДО потери
+    if artifacts_count > 0:
+        print("Ты можешь отпугнуть духов и вернуть потерянный предмет: ")
+        print("примени 1 из артефактов, полученных в часовне ")
+        print("(для этого введи команду 'use ' или 'применить' и название нужного артефакта).")
+        
+        # Возможность посмотреть артефакты
+        while True:
+            try:
+                cmd = get_input(prompt="> ").strip().lower()
+                
+                # ✅ ПОКАЗ АРТЕФАКТОВ
+                if cmd in ['items', 'артефакты']:
+                    current_artifacts = [item for item in items if item in ['candle', 'silver_cross']]
+                    if current_artifacts:
+                        print(f"Твои артефакты: {', '.join(current_artifacts)}")
+                    else:
+                        print("У тебя нет артефактов.")
+                    continue
+                
+                # ✅ СТРОГАЯ ПРОВЕРКА 4 КОМАНД
+                valid_commands = [
+                    "use candle",
+                    "применить candle", 
+                    "use silver_cross",
+                    "применить silver_cross"
+                ]
+                
+                if cmd in valid_commands and lost_item:
+                    # ✅ ПРОВЕРКА ТЕКУЩЕГО состояния (упрощенная)
+                    if (cmd in ["use candle", "применить candle"] and has_candle) or \
+                       (cmd in ["use silver_cross", "применить silver_cross"] and has_silver_cross):
+                        
+                        # ✅ ВОЗВРАТ ПОТЕРЯННОГО ПРЕДМЕТА
+                        items.append(lost_item)
+                        game_state['rooms'][current_room]['charmed_item'] = None
+                        print(f"✅ Артефакт сработал! {lost_item} возвращен в инвентарь!")
+                        print(f"📦 Инвентарь: {', '.join(items)}")
+                        print("Игра продолжается!")
+                        return
+                    else:
+                        print("❌ У тебя нет этого артефакта!")
+                        break
+                else:
+                    print("Ты не применил артефакт. Предмет остался заколдованным в комнате.")
+                    print("В комнате присутствует заколдованный артефакт, ты можешь взять его, ")
+                    print("применив один из артефактов, найденных в часовне.")
+                    break
+                    
+            except (KeyboardInterrupt, EOFError):
+                print("\nПрерывание... игра окончена.")
+                game_state['game_over'] = True
+                return
+    
+    # 4. НЕТ АРТЕФАКТОВ → УРОН 0-13
+    else:
+        damage = pseudo_random(game_state['steps'], 14)
+        print(f"Нанесён урон: {damage}")
+        
+        if damage in [0, 4, 13]:
+            print("Игра окончена. Сокровище добыть не удалось.")
+            print("🔄 Запусти игру заново: введи в терминале команду make run")
+            game_state['game_over'] = True
+        else:
+            print("Нанесён урон, но он не смертельный, ты можешь продолжить игру")
+            print("В комнате присутствует заколдованный артефакт, ты можешь взять его, ")
+            print("применив один из артефактов, найденных в часовне.")
+            back(game_state)

@@ -1,5 +1,5 @@
 # utils.py
-from labyrinth_game import ROOMS, get_input, attempt_open_treasure
+from labyrinth_game import ROOMS, TOTAL_PUZZLES, get_input, attempt_open_treasure
 
 
 # Модуль: описание комнаты
@@ -18,6 +18,10 @@ def describe_room(game_state):
         return
     
     room = ROOMS[current_room]
+
+    # Интеграция счётчика решенных загадок. Инициализация puzzles_solved
+    if 'puzzles_solved' not in game_state:
+        game_state['puzzles_solved'] = set()
     
     # 1. Название в верхнем регистре
     print(f"\n{'═' * 50}")
@@ -26,16 +30,25 @@ def describe_room(game_state):
     # 2. Описание комнаты
     print(room['description'])
     
-    # 3. Предметы
+    # 3. Проверка статуса загадки в комнате
+    if current_room in game_state['puzzles_solved']:
+        print("✅ Загадка решена")
+    elif room.get('puzzle'):
+        print("🔒 Кажется, здесь есть загадка (используй команду solve/решить)")
+    else:
+        print("ℹ️ Загадок нет")
+    
+    # 4. Предметы
     if room.get('items') and room['items']:
         print(f"💎 В комнате есть артефакты: {', '.join(room['items'])}")
     
-    # 4. Выходы
+    # 5. Выходы
     print(f"🚪 Выходы: {', '.join(room['exits'].keys())}")
-    
-    # 5. Загадка
-    if room.get('puzzle'):
-        print("🔒 Кажется, здесь есть загадка (используй команду solve).")
+     
+    # 6. Статистика прогресса
+    # total_puzzles = len([r for r in ROOMS if ROOMS[r].get('puzzle')])
+    solved_count = len(game_state['puzzles_solved'])
+    print(f"🧩 Прогресс: {solved_count}/{TOTAL_PUZZLES} ({solved_count/TOTAL_PUZZLES*100:.0f}%)")
     
     print(f"{'═' * 50}")
 

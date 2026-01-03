@@ -1,7 +1,7 @@
 # Модуль действий игрока: перемещение между комнатами
 
-from labyrinth_game import ROOMS, current_room
-from labyrinth_game import describe_room, prevent_take_chest, attempt_open_treasure
+from labyrinth_game import ROOMS, TOTAL_PUZZLES
+from labyrinth_game import describe_room, prevent_take_chest
 
 # Модуль действий игрока: проверка наличия артефактов
 def look_items(game_state):
@@ -10,6 +10,10 @@ def look_items(game_state):
     Args:
         game_state: {'artifacts': list, ...}
     '''
+    # Инициализация puzzles_solved
+    if 'puzzles_solved' not in game_state:
+        game_state['puzzles_solved'] = set()
+    
     items = game_state.get('items', [])
     
     if items:
@@ -17,8 +21,12 @@ def look_items(game_state):
     else:
         print("\n💎 Артефактов нет.")
     
-    print(f"{'═' * 40}")
-
+    # Прогресс решённых загадок
+    solved = len(game_state['puzzles_solved'])
+    progress_pct = (solved / TOTAL_PUZZLES * 100) if TOTAL_PUZZLES > 0 else 0
+    print(f"🧩 Загадок: {solved}/{TOTAL_PUZZLES} ({progress_pct:.0f}%)")
+    
+    print(f"{'═' * 50}")
 
 # Модуль действий игрока: ввод команд
 

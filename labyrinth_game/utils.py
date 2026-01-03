@@ -1,5 +1,5 @@
 # utils.py
-from labyrinth_game import ROOMS, back, describe_room, get_input
+from labyrinth_game import ROOMS, back, describe_room, get_input, attempt_open_treasure
 
 
 # Модуль: описание комнаты
@@ -47,6 +47,10 @@ def solve_puzzle(game_state):
     Если загадок нет, но есть предметы - подсказывает игроку.
     '''
     current_room = game_state['current_room']
+
+    # СПЕЦИАЛЬНАЯ ЛОГИКА ДЛЯ treasure_room
+    if current_room == 'treasure_room':
+        return attempt_open_treasure(game_state)
     
     # 1. Проверка наличия загадки
     if 'puzzle' not in ROOMS[current_room] or ROOMS[current_room]['puzzle'] is None:
@@ -104,4 +108,62 @@ def solve_puzzle(game_state):
         print("💭 Может вернёшься позже с новыми идеями? (если хочешь покинуть комнату, введи команду 'назад' или 'back' )")
         get_input(prompt="> ")
 
-        return False 
+        return False
+    
+# TREASURE ROOM финальная игровая логика
+
+# utils.py
+def attempt_open_treasure(game_state):
+    '''
+    Пытается открыть treasure_chest в treasure_room.
+    '''
+    current_room = game_state['current_room']
+    
+    # ① ПРОВЕРКА КЛЮЧА
+    if 'treasure_key' in game_state.get('items', []):
+        print("🔑 Чтобы открыть сундук примени treasure_key")
+        print("💡 Команда: use treasure_key или применить treasure_key")
+        return False  # Игрок должен использовать ключ
+    
+    # ② НЕТ КЛЮЧА → Загадка или отказ
+    print("Сундук заперт. На сундуке надпись...")
+    print("В печали молчит, а в счастье поёт,")
+    print("Без неё — тело есть, а человек не живёт.")
+    print("Она не стареет, не рвётся, не тлеет,")
+    print("А лишь растёт, если сердце умеет.")
+    
+    choice = input("Ввести код? (да/нет): ").strip().lower()
+    
+    if choice not in ['да', 'yes', 'y']:
+        print("Ты отступаешь от сундука.")
+        return False
+    
+    # ③ 3 ПОПЫТКИ ЗАГАДКИ
+    correct_answer = 'душа'
+    for attempt in range(3):
+        user_answer = input("Твой код: \n> ").strip().lower()
+        
+        if user_answer == correct_answer:
+            # ✅ ПОБЕДА!
+            if 'treasure_chest' in ROOMS[current_room]['items']:
+                ROOMS[current_room]['items'].remove('treasure_chest')
+            print("Ты применяешь код, и замок щёлкает. Сундук открыт!")
+            print("🏆 В сундуке сокровище! Ты победитель!")
+            game_state['game_over'] = True
+            return True
+        
+        print(f"❌ Неверный код. Осталось попыток: {2 - attempt}")
+    
+    # ④ 3 НЕУДАЧИ
+    print("Игра окончена. Ты не смог добыть сокровища.")
+    print("🔄 Запусти игру заново: python main.py")
+    game_state['game_over'] = True
+    return True
+
+def prevent_take_chest(game_state, item_name):
+    '''Блокирует взятие treasure_chest'''
+    if item_name == 'treasure_chest':
+        print("❌ Вы не можете поднять сундук, он слишком тяжелый.")
+        return True
+    return False
+

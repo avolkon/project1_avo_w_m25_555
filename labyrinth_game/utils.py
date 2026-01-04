@@ -520,12 +520,13 @@ def random_event(game_state):
             back(game_state)
             
     elif event_type == 3:  # СЦЕНАРИЙ 3: ЛОВУШКА
+        has_torch = 'torch' in items
         has_silver_cross = 'silver_cross' in items
         
         # Ловушка срабатывает при условии попадания в 1 из в TRAP_ROOMs без silver_cross
-        if current_room in TRAP_ROOMS and not has_silver_cross:
+        if current_room in TRAP_ROOMS and not has_silver_cross and not has_torch:
             print("💥 Внезапно срабатывает потайная ловушка!")
             trigger_trap(game_state)
         else:
-            if current_room in TRAP_ROOMS and has_silver_cross:
+            if current_room in TRAP_ROOMS: #and has_silver_cross or has_torch:
                 print("⚠️ Ты почувствовал опасность, но ловушка не сработала.\nОдин из артефактов помог тебе в этом.")

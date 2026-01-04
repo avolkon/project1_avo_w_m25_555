@@ -80,8 +80,30 @@ def process_command(game_state, command):
             back(game_state)
         
         case 'take' | 'взять':
-            if arg: take_item(game_state, arg) # Если есть аргумент, вызывает take_item (подбор предмета)
-            else: print("❌ Что взять?")
+
+            if not arg:
+                print("❌ Что взять?")
+                # break
+                
+            current_room = game_state['current_room']
+            room = ROOMS[current_room]
+            
+            # ✅ ПРОВЕРКА: есть ли предметы в комнате
+            if not room.get('items'):
+                print("❌ В комнате нет предметов!")
+                # break
+            
+            # ✅ ПРОВЕРКА: есть ли нерешённая загадка
+            if room.get('puzzle') and ('puzzles_solved' not in game_state or current_room not in game_state['puzzles_solved']):
+                print("🧩 Реши загадку и награда станет твоей по праву. Введи команду решить или solve.")
+                # break
+            
+            # ✅ Все проверки пройдены → берём предмет
+            take_item(game_state, arg)
+            
+
+            # if arg: take_item(game_state, arg) # Если есть аргумент, вызывает take_item (подбор предмета)
+            # else: print("❌ Что взять?")
         
         case 'use' | 'применить':
             if arg: use_item(game_state, arg) # Вызывает use_item с аргументом (названием предмета)

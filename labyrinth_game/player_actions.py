@@ -108,6 +108,18 @@ def move_player(game_state, direction, silent=False):
         print(f"❌ Нет выхода в направлении '{direction}' → доступные выходы {', '.join(sorted(exits))}")
         return False
     
+    # ✅ СПЕЦИАЛЬНАЯ ЛОГИКА для treasure_room: ИНТЕГРАЦИЯ - проверка treasure_room и rusty_key
+    target_room = exits[direction]
+    if target_room == 'treasure_room':
+        has_rusty_key = 'rusty_key' in game_state['items']
+        
+        if has_rusty_key:
+            print("🔑 Ты воспользовался найденным ключом, чтобы открыть путь в комнату сокровищ.")
+            
+        else:
+            print("🚪 Дверь заперта. Нужен ключ, чтобы пройти дальше.")
+            return False  # ❌ Игрок не вошёл в комнату сокровищ и вернулся в предыдущую
+
     # Сохраняем текущую комнату как предыдущую
     game_state['previous_room'] = current
 
@@ -140,7 +152,7 @@ def take_item(game_state, item_name):
     Returns: True=успех
     '''
     current = game_state['current_room']
-    # БЛОКИРОВКА СУНДУКА
+    # СПЕЦИАЛЬНАЯ ЛОГИКА для treasure_room: БЛОКИРОВКА СУНДУКА
     if prevent_take_chest(game_state, item_name):
         return False
     

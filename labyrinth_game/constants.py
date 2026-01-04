@@ -112,8 +112,8 @@ REWARDS = {
                 'trap_room': 'rusty_key',
                 'library': 'ancient_book',
                 'armory': 'sword',
-                'chapel': 'silver_cross', 'candle'
-                'secret_tunnel': 'rotten_wood', 'glowing_mushroom'
+                'chapel': ['silver_cross', 'candle'],
+                'secret_tunnel': ['rotten_wood', 'glowing_mushroom'],
                 'underground_spring': 'small_boat',
                 'secret_island': 'bronze_box' 
             }

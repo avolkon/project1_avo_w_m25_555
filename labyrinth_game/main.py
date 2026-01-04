@@ -8,8 +8,8 @@
 
 # Импорт модулей игры
 from labyrinth_game.constants import ROOMS, START_ROOM, WIN_ROOM, COMMANDS, MESSAGES
-from labyrinth_game.player_actions import move_player, take_item, use_item, show_items, get_input, back
-from labyrinth_game.utils import describe_room, solve_puzzle
+from labyrinth_game.player_actions import move_player, take_item, use_item, show_items
+from labyrinth_game.utils import describe_room, solve_puzzle, get_input, back
 
 # Определение состояния игрока
 game_state = {
@@ -83,7 +83,7 @@ def process_command(game_state, command):
             show_items(game_state) # Вызывает функцию, показывающую список артефактов игрока
         
         case 'help' | 'помощь':
-            show_help() # Выводит подсказку по командам
+            show_help(COMMANDS) # Выводит подсказку по командам
         
         case 'quit' | 'exit' | 'выход':
             game_state['game_over'] = True # Устанавливает флаг окончания игры в состоянии True

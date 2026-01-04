@@ -1,7 +1,7 @@
 # Модуль действий игрока: перемещение между комнатами
 
 from labyrinth_game.constants import ROOMS, TOTAL_PUZZLES
-from labyrinth_game.utils import describe_room, prevent_take_chest, random_event
+from labyrinth_game.utils import prevent_take_chest, random_event
 
 # Модуль действий игрока: проверка наличия артефактов
 def show_items(game_state):

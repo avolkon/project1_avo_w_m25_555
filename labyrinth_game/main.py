@@ -59,6 +59,17 @@ def process_command(game_state, command):
     arg = parts[1] if len(parts) > 1 else '' # Извлекает второй элемент (аргумент) из parts, если он есть
     
     match action:
+        
+        # ✅ #1: ДВИЖЕНИЕ БЕЗ 'go' (прямые направления)
+        case 'north' | 'север' | 'n':
+            move_player(game_state, 'north')
+        case 'south' | 'юг' | 's': 
+            move_player(game_state, 'south')
+        case 'east' | 'восток' | 'e':
+            move_player(game_state, 'east')
+        case 'west' | 'запад' | 'w':
+            move_player(game_state, 'west')
+            
         case 'go' | 'идти': # Срабатывает, если action равен 'go' или 'идти'
             if arg: move_player(game_state, arg) #Если есть аргумент (arg не пуст),
             # вызывает move_player с текущим состоянием и направлением

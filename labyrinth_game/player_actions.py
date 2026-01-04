@@ -1,7 +1,7 @@
 # Модуль действий игрока: перемещение между комнатами
 
 from labyrinth_game import ROOMS, TOTAL_PUZZLES
-from labyrinth_game import describe_room, prevent_take_chest
+from labyrinth_game import describe_room, prevent_take_chest, random_event
 
 # Модуль действий игрока: проверка наличия артефактов
 def show_items(game_state):
@@ -122,6 +122,9 @@ def move_player(game_state, direction, silent=False):
         print(f" → {', '.join(sorted(room['exits'].keys()))}")
         if room['items']: print(f"💎 {', '.join(room['items'])}")
         print(f"★ Шагов: {game_state['steps']}")
+    
+    # ИНТЕГРАЦИЯ: случайное событие после каждого успешного перемещения
+    random_event(game_state)
     
     return True
 

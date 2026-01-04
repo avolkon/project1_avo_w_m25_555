@@ -1,8 +1,26 @@
 # utils.py
-from labyrinth_game import ROOMS, TRAP_ROOMS, TOTAL_PUZZLES, get_input, attempt_open_treasure, back
-from labyrinth_game import SIN_MULTIPLIER, STRETCH_FACTOR
+from labyrinth_game.constants import ROOMS, TRAP_ROOMS, TOTAL_PUZZLES
+from labyrinth_game.constants import SIN_MULTIPLIER, STRETCH_FACTOR
+# from labyrinth_game.player_actions import get_input, back
+
 import math
 from typing import Union
+
+# Модуль действий игрока: ввод команд
+
+def get_input(prompt="> "):
+    '''
+    Безопасный ввод команды от пользователя.
+    Args:
+        prompt: Текст подсказки для ввода 
+    Returns:
+        str: Команда пользователя или "exit"
+    '''
+    try:
+        return input(prompt).strip().lower()
+    except (KeyboardInterrupt, EOFError):
+        print("\nВыход из игры.")
+        return "exit"
 
 
 # Модуль: описание комнаты
@@ -54,6 +72,46 @@ def describe_room(game_state):
     print(f"🧩 Прогресс: {solved_count}/{TOTAL_PUZZLES} ({solved_count/TOTAL_PUZZLES*100:.0f}%)")
     
     print(f"{'═' * 50}")
+
+# Модуль действий игрока: возвращение в предыдущую комнату
+
+def back(game_state):
+    '''
+    Возвращает игрока в предыдущую комнату.
+    Args:
+        game_state: dict с состоянием игры, должен содержать ключи:
+            - 'current_room': текущая комната
+            - 'previous_room': предыдущая комната (или None)
+            - 'steps': счётчик шагов
+    Returns:
+        bool: True если успешно вернулись, False если нельзя вернуться
+    '''
+    # Проверяем, есть ли предыдущая комната
+    if not game_state.get('previous_room'):
+        print("❌ Нельзя вернуться назад - ты в начале пути!")
+        return False
+    
+    # Сохраняем текущую комнату как временную
+    current = game_state['current_room']
+    
+    # Возвращаемся в предыдущую комнату
+    game_state['current_room'] = game_state['previous_room']
+    
+    # Обновляем previous_room для возможности вернуться ещё раз
+    # (теперь предыдущая - это та, из которой мы только что вышли)
+    game_state['previous_room'] = current
+    
+    # Увеличиваем счётчик шагов
+    if 'steps' in game_state:
+        game_state['steps'] += 1
+        print(f"★ Шагов: {game_state['steps']}")
+    
+    # Показываем описание комнаты
+    describe_room(game_state)
+    
+    print("↩️  Вы вернулись назад")
+    return True
+
 
 # Модуль: решение загадок:
 

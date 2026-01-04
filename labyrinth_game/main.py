@@ -9,7 +9,7 @@
 # Импорт модулей игры
 from labyrinth_game.constants import ROOMS, START_ROOM, WIN_ROOM, COMMANDS, MESSAGES
 from labyrinth_game.player_actions import move_player, take_item, use_item, show_items
-from labyrinth_game.utils import describe_room, solve_puzzle, get_input, back
+from labyrinth_game.utils import describe_room, solve_puzzle, get_input, back, attempt_open_treasure
 
 # Определение состояния игрока
 game_state = {
@@ -99,11 +99,15 @@ def process_command(game_state, command):
         case 'quit' | 'exit' | 'выход':
             game_state['game_over'] = True # Устанавливает флаг окончания игры в состоянии True
             print("👋 До свидания!")
-        
+
+        # ✅ Вызов функции загадок + СПЕЦИАЛЬНАЯ ЛОГИКА ДЛЯ treasure_room
         case 'solve' | 'решить':
-            solve_puzzle(game_state)  # Вызов функции загадок
-            # Вызывает функцию solve с полной командой
-            # (предполагается, что это загадка или нестандартная команда)
+            if game_state['current_room'] == 'treasure_room':
+                print("💎 Попытка открыть сокровище!")
+                attempt_open_treasure(game_state)  # ✅ Специальная функция
+            else:
+                solve_puzzle(game_state)  # Обычная загадка
+              
         case _:
             print("🛑 Неизвестная команда. Введи 'help' или 'помощь' для справки.")
     

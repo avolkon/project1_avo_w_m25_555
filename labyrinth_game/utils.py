@@ -1,8 +1,6 @@
 # utils.py
 from labyrinth_game.constants import ROOMS, TRAP_ROOMS, TOTAL_PUZZLES
 from labyrinth_game.constants import SIN_MULTIPLIER, STRETCH_FACTOR
-# from labyrinth_game.player_actions import get_input, back
-
 import math
 from typing import Union
 
@@ -225,7 +223,7 @@ def attempt_open_treasure(game_state):
     
     # Нет ключа → Выбор: Загадка или отказ
     else:
-        choice = input("Попробовать ввести код? (да/нет): ").strip().lower()
+        choice = input("Попробовать ввести код?\n(да/нет | y/n | yes/no): \n> ").strip().lower()
     
         if choice not in ['да', 'yes', 'y']:
             print("Ты отступаешь от сундука.")

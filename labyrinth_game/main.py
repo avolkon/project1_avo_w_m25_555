@@ -7,9 +7,9 @@
 #     main()
 
 # Импорт модулей игры
-from labyrinth_game import ROOMS, START_ROOM, WIN_ROOM, COMMANDS, MESSAGES
-from labyrinth_game import move_player, take_item, use_item, show_items, get_input, back
-from labyrinth_game import describe_room, solve_puzzle
+from labyrinth_game.constants import ROOMS, START_ROOM, WIN_ROOM, COMMANDS, MESSAGES
+from labyrinth_game.player_actions import move_player, take_item, use_item, show_items, get_input, back
+from labyrinth_game.utils import describe_room, solve_puzzle
 
 # Определение состояния игрока
 game_state = {

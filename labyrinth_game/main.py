@@ -13,7 +13,8 @@ from labyrinth_game import describe_room, solve_puzzle
 
 # Определение состояния игрока
 game_state = {
-    'items': [],  # артефакты игрока ['torch', 'rusty_key' итд.]        
+    'items': [],  # артефакты игрока ['torch', 'rusty_key' итд.]
+    'rooms': ROOMS,   
     'current_room': START_ROOM, # 'entrance'
     'previous_room': None, # Стартовое значение для предыдущей комнаты
     'game_over': False, # Конец игры

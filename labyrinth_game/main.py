@@ -19,6 +19,7 @@ game_state = {
     'game_over': False, # Конец игры
     'steps': 0,  # Счетчик ходов
     'puzzles_solved': set(), # Подсчёт решенных загадок
+    'coins' : 0,
 }
 
 def show_help(): # не принимает аргументов;

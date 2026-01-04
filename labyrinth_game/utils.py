@@ -1,5 +1,5 @@
 # utils.py
-from labyrinth_game import ROOMS, TOTAL_PUZZLES, get_input, attempt_open_treasure, back
+from labyrinth_game import ROOMS, TRAP_ROOMS, TOTAL_PUZZLES, get_input, attempt_open_treasure, back
 from labyrinth_game import SIN_MULTIPLIER, STRETCH_FACTOR
 import math
 from typing import Union
@@ -377,3 +377,88 @@ def trigger_trap(game_state: dict) -> None:
             print("Ты рожден(а) под счастливой звездой!\nНанесённый урон не смертельный, можешь продолжить игру!")
             back(game_state)
 
+
+## Модуль: Случайные события
+
+def random_event(game_state):
+    """
+    Функция активирует 
+    случайные события во время перемещения игрока.
+    Вероятность каждого: 1/13 * 1/3
+    Сценарии: находка, испуг, ловушка.
+    """
+    # 1. ОПРЕДЕЛЕНИЕ: происходит ли случайное событие (1/13 шанс)
+    if pseudo_random(game_state['steps'], 13) != 0:
+        return  # Нет события - игра продолжается
+    
+    print("\n🎲 СЛУЧАЙНОЕ СОБЫТИЕ!")
+    
+    # Извлечение данных из game_state (инициализация не нужна)
+    items = game_state['items']
+    current_room = game_state['current_room']
+    steps = game_state['steps']
+    
+    # Минимальная инициализация только для текущей комнаты
+    if current_room not in game_state['rooms']:
+        game_state['rooms'][current_room] = {'items': [], 'charmed_item': None}
+    
+    room_items = game_state['rooms'][current_room]['items']
+    
+    # 2. ВЫБОР ТИПА СОБЫТИЯ (1-3)
+    event_type = pseudo_random(steps, 3) + 1  # 1, 2, 3
+    
+    if event_type == 1:  # СЦЕНАРИЙ 1: НАХОДКА МОНЕТКИ
+        print("💰 Ты видишь на полу блестящую монетку!")
+        room_items.append('coin')
+        print("💡 Возьми монетку с помощью команды: 'take coin' или 'взять coin'")
+        
+        try:
+            cmd = get_input(prompt="> ").strip().lower()
+            if cmd in ['take coin', 'взять coin']:
+                if 'coin' in room_items:
+                    room_items.remove('coin')
+                    items.append('coin')
+                    game_state['coins'] = game_state.get('coins', 0) + 1
+                    print(f"✅ Монетка добавлена в артефакты! Всего монет: {game_state['coins']}")
+                else:
+                    print("В комнате больше нет монеток!")
+            else:
+                print("Монетка осталась лежать на полу...")
+        except (KeyboardInterrupt, EOFError):
+            print("\n👋 Прерывание ввода...")
+            back(game_state)
+            return
+            
+    elif event_type == 2:  # СЦЕНАРИЙ 2: ИСПУГ
+        print("😱 Ты слышишь подозрительный шорох в темноте!")
+        
+        has_sword = 'sword' in items
+        if has_sword:
+            print("⚔️ У тебя есть меч! Примени его, чтобы отпугнуть существо:")
+            print("💡 Команды: 'use sword' или 'применить sword'")
+            try:
+                cmd = get_input(prompt="> ").strip().lower()
+                if cmd in ['use sword', 'применить sword']:
+                    print("🗡️ Меч вспыхнул! Тень отступила, ты в безопасности!")
+                else:
+                    print("❌ Ты не применил меч! Существо атакует!")
+                    print("👻 Испуганный, ты отступаешь назад в предыдущую комнату...")
+                    back(game_state)
+            except (KeyboardInterrupt, EOFError):
+                print("\n👋 Прерывание... существо заметило тебя!")
+                back(game_state)
+        else:
+            print("❌ У тебя нет оружия! Темное существо пугает тебя...")
+            print("👻 Ты вынужден отступить назад в предыдущую комнату!")
+            back(game_state)
+            
+    elif event_type == 3:  # СЦЕНАРИЙ 3: ЛОВУШКА
+        has_silver_cross = 'silver_cross' in items
+        
+        # Ловушка срабатывает при условии попадания в 1 из в TRAP_ROOMs без silver_cross
+        if current_room in TRAP_ROOMS and not has_silver_cross:
+            print("💥 Внезапно срабатывает потайная ловушка!")
+            trigger_trap(game_state)
+        else:
+            if current_room in TRAP_ROOMS and has_silver_cross:
+                print("⚠️ Ты почувствовал опасность, но ловушка не сработала.\nОдин из артефактов помог тебе в этом.")

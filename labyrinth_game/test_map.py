@@ -1,4 +1,5 @@
-from constants import ROOMS, START_ROOM, WIN_ROOM
+from labyrinth_game.constants import ROOMS, START_ROOM, WIN_ROOM
+
 print(f"Комнаты: {len(ROOMS)}")  # 9
 print(f"Старт: {ROOMS[START_ROOM]['exits']}")  # {'north': 'hall', 'east': 'trap_room'}
 print(f"Победа: {WIN_ROOM in ROOMS}")  # True

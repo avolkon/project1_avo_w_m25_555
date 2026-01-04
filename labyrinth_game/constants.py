@@ -107,6 +107,18 @@ ROOMS = {
 
 }
 
+REWARDS = {
+                'entrance': 'torch',
+                'trap_room': 'rusty_key',
+                'library': 'ancient_book',
+                'armory': 'sword',
+                'chapel': 'silver_cross', 'candle'
+                'secret_tunnel': 'rotten_wood', 'glowing_mushroom'
+                'underground_spring': 'small_boat',
+                'secret_island': 'bronze_box' 
+            }
+            
+
 # Основные константы игры
 START_ROOM = 'entrance'
 WIN_ROOM = 'treasure_room'

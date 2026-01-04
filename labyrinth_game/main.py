@@ -80,6 +80,7 @@ def process_command(game_state, command):
             back(game_state)
         
         case 'take' | 'взять':
+        # Добавлена логика, ограничивающая возможность взять артефакт без решения загадки
 
             if not arg:
                 print("❌ Что взять?")
@@ -88,7 +89,7 @@ def process_command(game_state, command):
             current_room = game_state['current_room']
             room = ROOMS[current_room]
             
-            # ✅ ПРОВЕРКА: есть ли предметы в комнате
+            # ПРОВЕРКА: есть ли предметы в комнате
             if not room.get('items'):
                 print("❌ В комнате нет предметов!")
                 # break
@@ -101,7 +102,7 @@ def process_command(game_state, command):
             # ✅ Все проверки пройдены → берём предмет
             take_item(game_state, arg)
             
-
+            # блок кода без проверки наличия нерешённых загадок
             # if arg: take_item(game_state, arg) # Если есть аргумент, вызывает take_item (подбор предмета)
             # else: print("❌ Что взять?")
         
@@ -157,7 +158,7 @@ def main():
             # от аварийного завершения при неожиданных прерываниях
             # (например, если игрок нажмёт Ctrl+C)
 
-            cmd = get_input("\nВведи команду: действие + направление\n(для справки help или помощь)\n> ")
+            cmd = get_input("\nВведи команду: действие или направление\n(для справки help или помощь)\n> ")
             # Выводит приглашение, Передаёт введённую строку в функцию process_command()
             # Эффект: игрок вводит команду (например, go north), она обрабатывается
             process_command(game_state, cmd)

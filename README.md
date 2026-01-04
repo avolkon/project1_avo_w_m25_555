@@ -39,16 +39,12 @@ poetry install
 
 это нужно для последующего корректного запуска проекта и регистрации скриптов игры в виртуальном окружении
 
-2. Зачем-то нужно указать здесь про 
-poetry init
-при разработке игры эта команда формировала первичный файл pyproject.toml
-зачем она нужна игроку - не догадываюсь, но poetry init почему-то должен быть здесь упомянут.
+2. Для запуска игры в терминале нужно ввести:
 
-3. Вот тут уже интересно: для запуска игры в моём терминале достаточно ввести:
+make run
 
-make run - и всё заработает.
+игра запустится.
 
-Интересно, что нужно сделать в твоём?...
 Более длинный вариант с тем же итогом - запуском игры выглядит у меня так:
 
 poetry run laby
@@ -60,32 +56,3 @@ poetry run laby
 
 но в целом, make run для запуска должно быть вполне достаточно.
 
-
-
-
-
-
-
-Как выглядит современный pyproject.toml (PEP 621)
-toml
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[project]
-name = "my-project"
-version = "0.1.0"
-description = "My awesome project"
-readme = "README.md"
-requires-python = ">=3.8"
-authors = [
-    {name = "Your Name", email = "you@example.com"},
-]
-dependencies = [
-    "requests>=2.25.0",
-    "click>=8.0.0",
-]
-
-[project.scripts]
-my-cli = "my_project.cli:main"

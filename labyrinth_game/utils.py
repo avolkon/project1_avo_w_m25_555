@@ -99,18 +99,20 @@ def solve_puzzle(game_state):
     print("🧩 Загадка:")
     print(question)
     
+    # ✅ АЛЬТЕРНАТИВНЫЕ ОТВЕТЫ для '10' (число + слова)
+    correct_answers = ['10', 'десять', 'ten', 'Десять', 'TEN']
+
     # 4. Получаем ответ
     user_answer = input("Твой ответ: ").strip().lower()
     
     # 5. Сравниваем ответ
-    if user_answer == correct_answer.lower():
+    if user_answer == correct_answer.lower() or user_answer in [v.lower() for v in correct_answers]:
         # 6. Ответ верный
-        print("✅ Правильно! Загадка решена.")
+        print("Правильно! Загадка решена.")
 
         game_state['puzzles_solved'].add(current_room)
         print(f"🎉 Всего решено: {len(game_state['puzzles_solved'])}")
    
-        
         # 7. Убираем загадку
         ROOMS[current_room]['puzzle'] = None
         
